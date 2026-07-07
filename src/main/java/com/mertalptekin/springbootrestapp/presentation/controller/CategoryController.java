@@ -3,6 +3,7 @@ package com.mertalptekin.springbootrestapp.presentation.controller;
 import com.mertalptekin.springbootrestapp.application.category.CategoryResponseDto;
 import com.mertalptekin.springbootrestapp.application.category.CreateCategoryRequest;
 import com.mertalptekin.springbootrestapp.application.category.ProductResponseDto;
+import com.mertalptekin.springbootrestapp.application.category.UpdateCategoryRequest;
 import com.mertalptekin.springbootrestapp.domain.entity.Category;
 import com.mertalptekin.springbootrestapp.domain.entity.Product;
 import com.mertalptekin.springbootrestapp.infra.repository.ICategoryRepository;
@@ -104,16 +105,7 @@ public class CategoryController {
     }
 
 
-    @PutMapping("{id}")
-    public  ResponseEntity<Object> update(@PathVariable Integer id,@RequestParam CategoryResponseDto request){
-        if(!categoryRepository.existsById(id)){
-            return ResponseEntity.notFound().build(); // 404
-        } else {
-            Category entity =  modelMapper.map(request,Category.class);
-            categoryRepository.save(entity);
-            return ResponseEntity.noContent().build(); // 204
-        }
-    }
+
 
     //api/v1/categories/withProducts
     @GetMapping("/withProducts")
@@ -146,6 +138,25 @@ public class CategoryController {
         return ResponseEntity.noContent().build();
     }
 
+
+    @PutMapping("{id}")
+    public  ResponseEntity<Object> update(@PathVariable Integer id,@Valid @RequestBody UpdateCategoryRequest request){
+        if(!categoryRepository.existsById(id)){
+            return ResponseEntity.notFound().build(); // 404
+        } else {
+
+            Optional<Category> data = categoryRepository.findById(id);
+
+            if(data.isPresent()){
+                Category entity = data.get();
+                entity.setName(request.name());
+                categoryRepository.save(entity);
+                return ResponseEntity.noContent().build(); // 204
+            } else {
+                return ResponseEntity.notFound().build(); // 404
+            }
+        }
+    }
 
     // Products Entity
 
