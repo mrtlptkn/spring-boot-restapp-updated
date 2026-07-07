@@ -2,6 +2,7 @@ package com.mertalptekin.springbootrestapp.infra.repository;
 
 import com.mertalptekin.springbootrestapp.domain.entity.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -15,6 +16,7 @@ public interface ICategoryRepository extends JpaRepository<Category, Integer> {
 
     // NamedParameter :categoryId
     // Ben kategoriyi idsine göre çekerken products alanını da fetch etmesini istiyorum.
+    //@NativeQuery("select * from categories c where c.id =: categoryId")
     @Query("SELECT c FROM Category c LEFT JOIN FETCH c.products WHERE c.id = :categoryId")
     Optional<Category> findWithProductsByCategoryId(@Param("categoryId") Integer categoryId);
 }
