@@ -35,69 +35,52 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
 
+        // token varsa token bizim sistem tarafından üretilen bir token mı?
         String authHeader = request.getHeader("Authorization");
 
         if(authHeader != null && authHeader.startsWith("Bearer ")) {
             // Burada token doğrulama ve kullanıcı bilgilerini yükleme işlemleri yapılabilir.
             String token = authHeader.substring(7);
-
-            // Token gönderirse budurumda doğrulama işlemleri yapılabilir. Bu token geçerli mi, süresi dolmuş mu gibi kontroller yapılabilir.
-            System.out.println("Token: " + token);
-
-
-            // Login olurken oluşturuğum kullanıcı hesabı üzerinden yenide her istek de login miyim kontrolünü token üzerinden yapmam lazım
-            // Bunu yaparkende UserDetailsService'den kullanıcı bilgileri ile tokendan gelen kullanıcı bilgilerini kıyalayıp, token bilgisinin expire olmağını kontrol etmem lazım.
-
-            // Eğer kullanıcı ile tokendaki kullanıcı bilgisi eşleşiyorsa, bu token kullanıcya aittir. Çünkü kullanıcının parolasını token içinde güvenllik endişesi sebebi ile saklayamayız.
-
-            // Token expr değilse ve kullanıcı oturumu veritabnındaki kullanıcı ile eşleşiyorsa, bu userDetails bilgisi ile yeniden uygulamada oturum açmaya çalış.
-
+            // tokenın içindeki kullanıcı bilgisi.
               String username = jwtService.parseToken(token).getSubject();
-//            List<GrantedAuthority> authority = (List<GrantedAuthority>) jwtService.parseToken(token).get("roles");
-//
 
-
+            // kullanıcı sistemde kayıtlı mı ?
             UserDetails userDetails =  this.userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found with username: " + username));
 
-
-
-                // Tokenın validate edilmesi lazım.
+                // Token Validate mı ?
                 if(jwtService.isTokenValid(token, userDetails)) {
                     System.out.println("Token is valid for user: " + username);
 
                     // Stateless çalıştığımız için her istekde SecurityContextHolder'a Authentication objesi set etmemiz lazım.
 
+                    // eğer sisteme authenticate olabiliyorsak
                     UsernamePasswordAuthenticationToken authenticationToken =  new UsernamePasswordAuthenticationToken(
                             userDetails.getUsername(),
                             userDetails.getPassword(),
                             userDetails.getAuthorities()
                     );
 
-                    // Uygulama beni Authenticated kabul etsin.
-                    // Security Config .anyRequest().authenticated()); dediğimizden uygulamının token gönderen kullanıcıyı hesap açmış gibi görmesi lazım.
-                    // Normal Web uygulamarında cookie ile bunu yönetirdik. Her istekde cookiedan oturum kontrolü yapardık. Ama RestServislerde bu kontrol tokendan yönetilmelidir. Stateless durumsuz bir yapı olması sebebi ile cookie üzerinden bu işlemleri session bazlı yönetemediğimizden dolayı Client Header üzerinden  Authorization: Bearer Token ile token gönderir.
-                    // Bizde burada token göre oturum yönetimini anlık yapmalıyız.
+
+                    // Security Filterdan geçmek için sisteme authenticationToken token set et ve
+                    // oturum açılmış olsun.
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    // isteği kaldığımız yerden devam ettir.
                     filterChain.doFilter(request, response);
 
                 } else {
                     System.out.println("Invalid token for user: " + username);
-                    // Süreci artık SecurityFilterChain'e devret, SecurityConfig'de tanımlanan kurallar işleyecek.
+                    // Eğer token var ama authenticated olamazsak istek yani token valid değilse.
                     filterChain.doFilter(request, response); // 401 döner.
                 }
 
-
         } else {
-            // kullanıcı eğer authenticated olan bir endpointe token göndermezse bu durumda SecurityConfig'de tanımladığımız gibi 401 hatası dönecektir.
-
-            // bunlar dışında 401 alacağız.
-            //  .requestMatchers("/api/demo/**").permitAll()
-            //  .requestMatchers(("/api/auth/**")).permitAll()
-            //  .requestMatchers("/h2-console/**").permitAll()
-            // Süreci SecurityFilterChain'e devret, SecurityConfig'de tanımlanan kurallar işleyecek.
+            // Zaten headerdan token gelmiyor. Securtiy condif deki permitAll dışında tüm tanımlamalar için isteği kes. 401 döndür.
+            // .requestMatchers("/api/v1/demo/**").hasAuthority("ROLE_MANAGER") bu kod takılır.
+            // veya controller içerisinde
+            // @PreAuthorize("hasRole('ADMIN') and hasAuthority('ROLE_MANAGER')") takılır. Bunları geçemeyeceğinden 401 döner.
+            // .requestMatchers("/api/v1/products/**").authenticated()
             System.out.println("No Bearer token found in Authorization header.");
             filterChain.doFilter(request, response); // 401 döner.
-
         }
 
     }

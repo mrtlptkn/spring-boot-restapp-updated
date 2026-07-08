@@ -18,15 +18,18 @@ import java.security.SignatureException;
 @Component
 public class AuthEntryPoint implements AuthenticationEntryPoint {
 
-    private final JwtService jwtService;
+
 
     public AuthEntryPoint(JwtService jwtService) {
-        this.jwtService = jwtService;
+
     }
 
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
+
+
+
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 response.getWriter().write(authException.getMessage());
     }

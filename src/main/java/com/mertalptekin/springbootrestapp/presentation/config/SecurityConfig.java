@@ -17,6 +17,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+
+// Spring Security AuthenticationFilter filterdaki kuralları geçen ki her istekte
+// kontrol ediliyor
+
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
@@ -31,6 +35,8 @@ public class SecurityConfig {
     }
 
 
+    // uygulama içerisindeki güvenlik poliçelerini merkezi olarak yöneten bir
+    // konfigürasyon dosyası
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtService jwtService) throws Exception {
         // web uygulamasında hangi endpointlere login oladan gireceğimiz yöneteceğiz.
@@ -54,6 +60,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/categories/**").permitAll()
                         .requestMatchers("/api/v1/courses/**").permitAll()
                         .requestMatchers("/api/v1/demo/**").hasAuthority("ROLE_MANAGER")
+                        .requestMatchers("/api/v1/products/**").authenticated()
                         .requestMatchers(("/api/v1/auth/**")).permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/info").permitAll()
