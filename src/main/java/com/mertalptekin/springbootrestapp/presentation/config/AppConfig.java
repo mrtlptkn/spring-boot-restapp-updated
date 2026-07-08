@@ -43,18 +43,25 @@ public class AppConfig {
     }
 
 
+    // sistemde oturum açmak isteyen kullanıcı bilgilerini veritabanından yüklediğimiz servis
+    // Bean
     @Bean
     public UserDetailsService userDetailsService() {
         return customUserDetailService;
     }
 
     // Password encoder bean tanımı, şifreleri güvenli bir şekilde saklamak için kullanılır.
+    // user login olurken kullanıcı parola girecek. bu girilen paralo ile veritabanında şifrelenmiş
+    // olan paralonın hash eşleşmesi lazım. Bunu spring Security otomatik olarak yönetir.
+    // bu Bean ise bu login sürecinde paralonun hashlenmesi ve hashlenmiş parolaların kıyaslanması için
+    // var.
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // Burada kullanıcı bilgisi veritabanından çekilrirken hangi şifreleme bean ve hangi servis kullanılacağını belirtiyoruz.
+    // Burada kullanıcı bilgisi veritabanından çekilrirken hangi şifreleme bean ve
+    // hangi servis kullanılacağını belirtiyoruz.
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -63,6 +70,7 @@ public class AppConfig {
         return authProvider;
     }
 
+    // login işlemi sırasında authentication sürecini yöneten servisimi ise bu.
     // AuthenticationManager bean tanımı, kimlik doğrulama işlemlerini yönetir.
     // APIda UsernamePasswordAuthenticationToken bazlı kimlik doğrulama işlemleri için kullanacağız.
     // AuthenticationManager, Spring Securityde birden fazla kimlik doğrulama yönetini yöneten sınıftır.
@@ -71,22 +79,6 @@ public class AppConfig {
             return authenticationConfiguration.getAuthenticationManager();
     }
 
-//    @Bean
-//    public AuthenticationManager authenticationManager() {
-//        return authentication -> {
-//            String username = authentication.getName();
-//            String password = authentication.getCredentials().toString();
-//
-//            UserDetails userDetails = userDetailsService().loadUserByUsername(username);
-//
-//            if (passwordEncoder().matches(password, userDetails.getPassword())) {
-//                return new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-//                        username, password, userDetails.getAuthorities());
-//            } else {
-//                throw new UsernameNotFoundException("Invalid username or password");
-//            }
-//        };
-//    }
 
 
 }

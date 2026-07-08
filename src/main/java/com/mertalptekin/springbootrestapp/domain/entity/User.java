@@ -33,7 +33,13 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password; // şifre alanı, hashlenmiş şifre saklanmalı
 
+    // Eager loading ile veri tabanından user çekilirken role tablosundanda role bilgileri
+    // ilişki userlar ile birlikte tek bir sorguda çekilir.
+    // select * from users left join roles
     @ManyToMany(fetch = FetchType.EAGER)
+    // ara bşr tablo varsa Joişn Table açılır
+    // user Role entitysi program tarafında yok ama sql tarafında böyle bir tabloya ihtiyaç olduğundan
+    // sql tarafında açılır.
     @JoinTable(
             name = "user_roles", // ara tablo adı
             joinColumns = @JoinColumn(name = "user_id"),
@@ -46,6 +52,7 @@ public class User implements UserDetails {
     // Role tablasu olurşturmak yerine buradan verdik.
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        // role yetkilerini spring security anlasın diye dolduruyoruz
         return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
     }
 }

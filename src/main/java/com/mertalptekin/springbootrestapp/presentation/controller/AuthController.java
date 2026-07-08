@@ -45,12 +45,20 @@ public class AuthController {
 
         // Böyle bir kullanıcı bilgisi User tablosunda var mı? UserDetailsService ile kontrol et.
         // Username ve Password -> kontrolü yapar.
+        // UserDetailService, DaoAutenticationProvider ve PasswordEncoder beanleri
+        // kullanılarak kimlik doğrulama yapılabiliyor mu diye kontrol edilir. Sonra
+        // SecurityContextHolder hangi şuanki rest uygulamasına bu kullanıcı sisteme
+        // giriş yaptı diyoruz.
+        // kullanıcı artık sistem üzerinden kimlik doğrulama başarılı ise
+        // token generate edip kullanıcıya token gönderiyoruz.
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             request.username(),
                             request.password()
                     )
             );
+
+
 
             // Security Config dosyasında .anyRequest().authenticated()); koddan geçebilmek için. Uygulama üzerinde anlık oturum açmamız gerekiyor.
             SecurityContextHolder.getContext().setAuthentication(authentication);
