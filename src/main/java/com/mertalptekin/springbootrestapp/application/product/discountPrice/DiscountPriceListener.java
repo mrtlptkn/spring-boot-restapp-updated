@@ -4,14 +4,10 @@ import com.mertalptekin.springbootrestapp.domain.entity.Product;
 import com.mertalptekin.springbootrestapp.domain.entity.ProductPrice;
 import com.mertalptekin.springbootrestapp.infra.repository.IProductPriceRepository;
 import com.mertalptekin.springbootrestapp.infra.repository.IProductRepository;
-import com.mertalptekin.springbootrestapp.infra.service.IEmailSender;
+import com.mertalptekin.springbootrestapp.infra.email.IEmailSender;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionalEventListener;
-
-import java.sql.SQLException;
-import java.time.LocalDateTime;
 
 @Component
 public class DiscountPriceListener {

@@ -2,7 +2,7 @@ package com.mertalptekin.springbootrestapp.application.product.create;
 
 import com.mertalptekin.springbootrestapp.domain.entity.Product;
 import com.mertalptekin.springbootrestapp.domain.service.product.IProductService;
-import com.mertalptekin.springbootrestapp.infra.service.IEmailSender;
+import com.mertalptekin.springbootrestapp.infra.email.IEmailSender;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

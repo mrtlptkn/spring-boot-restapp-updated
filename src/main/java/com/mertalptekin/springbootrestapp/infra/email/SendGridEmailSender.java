@@ -1,4 +1,4 @@
-package com.mertalptekin.springbootrestapp.infra.service;
+package com.mertalptekin.springbootrestapp.infra.email;
 
 import org.springframework.stereotype.Component;
 

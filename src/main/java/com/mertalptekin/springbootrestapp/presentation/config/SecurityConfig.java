@@ -63,8 +63,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/products/**").authenticated()
                         .requestMatchers(("/api/v1/auth/**")).permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
                         .anyRequest().authenticated());
+        // prod ortamları için healt metrics ve info endpointlerini açmalıyız. * dev için sadece geçerli.
         http.authenticationProvider(authenticationProvider); // Kimlik doğrulama sağlayıcıyı ekliyoruz.
 
         // JWT Filter ile jwt doğrulama yapacağız.
