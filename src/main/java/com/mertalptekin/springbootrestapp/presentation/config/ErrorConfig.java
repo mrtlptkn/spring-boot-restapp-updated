@@ -45,6 +45,19 @@ public class ErrorConfig {
     }
 
 
+    // RuntimeException takip et.
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Object> handleInternalServerError(RuntimeException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+
+        System.out.println("Custom Error");
+
+        // Sunucu içinde bir hata meydana geldi.
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+
+
 }
 
 

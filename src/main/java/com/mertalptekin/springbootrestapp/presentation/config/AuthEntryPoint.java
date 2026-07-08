@@ -40,19 +40,19 @@ public class AuthEntryPoint implements AuthenticationEntryPoint {
 
             } catch (Exception e) {
                 // Geçersiz token ise 401 Unauthorized döner
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write(
-                        "{ \"error\": \"Unauthorized\", " +
-                                "\"message\": \"Geçersiz token\" }"
-                );
+//                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                response.getWriter().write(
+//                        "{ \"error\": \"Unauthorized\", " +
+//                                "\"message\": \"Geçersiz token\" }"
+//                );
             }
         } else {
             // Kullanıcı kimliği doğrulanmamış ise 401
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write(
-                    "{ \"error\": \"Unauthorized\", " +
-                            "\"message\": \"Kimlik doğrulama gerekli\" }"
-            );
+//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//            response.getWriter().write(
+//                    "{ \"error\": \"Unauthorized\", " +
+//                            "\"message\": \"Kimlik doğrulama gerekli\" }"
+//            );
 
         }
 
