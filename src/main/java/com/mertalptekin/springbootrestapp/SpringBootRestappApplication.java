@@ -35,7 +35,6 @@ public class SpringBootRestappApplication {
         demoService.test();
 
 
-
 //        Scanner scanner = new Scanner(System.in);
 //        System.out.print("Write commit type dbCommit or cacheCommit : ");
 //        String CommitType = scanner.nextLine();

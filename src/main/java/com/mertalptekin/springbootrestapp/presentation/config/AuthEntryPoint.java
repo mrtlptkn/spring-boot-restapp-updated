@@ -1,6 +1,8 @@
 package com.mertalptekin.springbootrestapp.presentation.config;
 
 import com.mertalptekin.springbootrestapp.infra.jwt.JwtService;
+import io.jsonwebtoken.UnsupportedJwtException;
+import jakarta.security.auth.message.AuthException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,6 +11,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.security.SignatureException;
 
 // Kimlik doğrulaması başarısız olduğunda çağrılan bileşen
 
@@ -23,39 +26,8 @@ public class AuthEntryPoint implements AuthenticationEntryPoint {
 
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-
-        response.setContentType("application/json");
-        String authHeader = request.getHeader("Authorization");
-
-        if(authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
-            try {
-                jwtService.parseToken(token);
-
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getWriter().write(
-                        "{ \"error\": \"Forbidden\", " +
-                                "\"message\": \"Bu kaynağa erişim yetkiniz yok\" }");
-
-            } catch (Exception e) {
-                // Geçersiz token ise 401 Unauthorized döner
-//                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//                response.getWriter().write(
-//                        "{ \"error\": \"Unauthorized\", " +
-//                                "\"message\": \"Geçersiz token\" }"
-//                );
-            }
-        } else {
-            // Kullanıcı kimliği doğrulanmamış ise 401
-//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//            response.getWriter().write(
-//                    "{ \"error\": \"Unauthorized\", " +
-//                            "\"message\": \"Kimlik doğrulama gerekli\" }"
-//            );
-
-        }
-
-
+                response.getWriter().write(authException.getMessage());
     }
 }
